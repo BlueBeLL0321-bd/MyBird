@@ -22,6 +22,10 @@ namespace MyBird
         // 이동
         // 이동 속도 - Translate 시작하면 자동 오른쪽으로 이동
         [SerializeField] private float moveSpeed = 5f;
+
+        // 대기
+        // 아래로 떨어지지 않을 만큼의 새를 받치는 힘
+        [SerializeField] private float readyForce = 1f;
         #endregion
 
         #region Unity Event Method
@@ -40,6 +44,13 @@ namespace MyBird
             // 인풋 처리
             InputBird();
 
+            if (GameManager.IsStart == false)
+            {
+                // 버드 대기
+                ReadyBird();
+                return;
+            }
+
             // 버드 회전
             RotateBird();
 
@@ -56,6 +67,23 @@ namespace MyBird
                 keyJump = false;
             }
         }
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            // collision : 부딪힌 콜라이더 정보를 가지고 있다
+            if(collision.gameObject.tag == "Ground")
+            {
+                Debug.Log("그라운드 충돌");
+            }
+            else if(collision.gameObject.tag == "Pipe")
+            {
+                Debug.Log("기둥 충돌");
+            }
+            else if (collision.gameObject.tag == "Point")
+            {
+                Debug.Log("포인트 획득");
+            }
+        }
         #endregion
 
         #region Custom Method
@@ -66,13 +94,19 @@ namespace MyBird
             keyJump |= Input.GetKeyDown(KeyCode.Space);
             keyJump |= Input.GetMouseButtonDown(0);
 
+            // 게임 시작 전이고 점프 키가 눌리면
+            if(GameManager.IsStart == false && keyJump == true)
+            {
+                GameManager.IsStart = true;
+            }
+
         }
 
         // 버드 점프하기
         void JumpBird()
         {
             // 아래쪽에서 위쪽으로 힘을 준다
-            // rb2D.AddForce(Vector2.up * jumpForce);
+            // rb2D.AddForce(Vector2.up * jumpForce(힘));
             rb2D.linearVelocity = Vector2.up * jumpForce;
         }
 
@@ -95,8 +129,20 @@ namespace MyBird
             this.transform.eulerAngles = birdRotation;
         }
 
+        // 버드 대기
+        void ReadyBird()
+        {
+            // 아래쪽에서 떨어지지 않도록 위쪽으로 힘을 준다
+            if(rb2D.linearVelocity.y < 0f)
+                rb2D.linearVelocity = Vector2.up * readyForce;
+        }
+
+        // 버드 이동
         void MoveBird()
         {
+            if (GameManager.IsStart == false)
+                return;
+
             this.transform.Translate(Vector3.right * Time.deltaTime * moveSpeed, Space.World);
         }
         #endregion

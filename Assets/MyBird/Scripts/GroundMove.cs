@@ -23,10 +23,12 @@ namespace MyBird
             if (GameManager.IsStart == false)
                 return;
 
-            // 왼쪽으로 moveSpeed만큼 이동
-            transform.Translate(Vector3.left * Time.deltaTime * moveSpeed, Space.World);
+            float speed = GameManager.IsDeath ? moveSpeed / 4f : moveSpeed;
 
-            //
+            // 왼쪽으로 moveSpeed만큼 이동
+            transform.Translate(Vector3.left * Time.deltaTime * speed, Space.World);
+
+            // 배경 풀링
             if(transform.localPosition.x <= -8.4f)
             {
                 transform.position = new Vector3(transform.position.x + 8.4f, transform.position.y, transform.position.z);

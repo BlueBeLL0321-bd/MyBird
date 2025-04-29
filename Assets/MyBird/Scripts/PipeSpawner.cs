@@ -25,7 +25,7 @@ namespace MyBird
         // 1초마다 기둥 하나씩 생성, 게임 시작 시(IsStart == true)
         private void Update()
         {
-            if (GameManager.IsStart == false)
+            if (GameManager.IsStart == false || GameManager.IsDeath == true)
                 return;
 
             // 타이머

@@ -2,46 +2,49 @@ using UnityEngine;
 
 namespace MyBird
 {
-    // ±âµÕ »ı¼º±â - 1ÃÊ¸¶´Ù ±âµÕ ÇÏ³ª¾¿ »ı¼º
+    // ê¸°ë‘¥ ìƒì„±ê¸° - 1ì´ˆë§ˆë‹¤ ê¸°ë‘¥ í•˜ë‚˜ì”© ìƒì„±
     public class PipeSpawner : MonoBehaviour
     {
         #region Variables
-        // ±âµÕ ÇÁ¸®ÆÕ
+        // ê¸°ë‘¥ í”„ë¦¬íŒ¹
         public GameObject pipePrefab;
 
-        // 1ÃÊ Å¸ÀÌ¸Ó
+        // 1ì´ˆ íƒ€ì´ë¨¸
         [SerializeField] private float pipeTimer = 1f;
         private float countdown = 0f;
 
-        // ½ºÆù À§Ä¡
+        // ìŠ¤í° ìœ„ì¹˜
         [SerializeField] private float maxSpawnY = 3.3f;
         [SerializeField] private float minSpawnY = -1.6f;
 
-        // ½ºÆù °£°İ
+        // ìŠ¤í° ê°„ê²© : 10ê°œì”© í†µê³¼í•  ë•Œë§ˆë‹¤ 0.95 ~ 1.05 -> 0.90 ~ 1.00 -> 0.85 ~ 0.95
         [SerializeField] private float maxSpawnTime = 1.05f;
         [SerializeField] private float minSpawnTime = 0.95f;
+        [SerializeField] private float levelingTime = 0.05f;
         #endregion
 
-        // 1ÃÊ¸¶´Ù ±âµÕ ÇÏ³ª¾¿ »ı¼º, °ÔÀÓ ½ÃÀÛ ½Ã(IsStart == true)
+        // 1ì´ˆë§ˆë‹¤ ê¸°ë‘¥ í•˜ë‚˜ì”© ìƒì„±, ê²Œì„ ì‹œì‘ ì‹œ(IsStart == true)
         private void Update()
         {
             if (GameManager.IsStart == false || GameManager.IsDeath == true)
                 return;
 
-            // Å¸ÀÌ¸Ó
+            // íƒ€ì´ë¨¸
             countdown += Time.deltaTime;
             if(countdown >= pipeTimer)
             {
-                // Å¸ÀÌ¸Ó ±â´É
+                // íƒ€ì´ë¨¸ ê¸°ëŠ¥
                 SpawnPipe();
 
-                // Å¸ÀÌ¸Ó ÃÊ±âÈ­
+                // íƒ€ì´ë¨¸ ì´ˆê¸°í™”
                 countdown = 0f;
-                pipeTimer = Random.Range(minSpawnTime, maxSpawnTime);
+
+                float levelingValue = (int)(GameManager.Score / 10) * levelingTime;
+                pipeTimer = Random.Range(minSpawnTime - levelingValue, maxSpawnTime - levelingValue);
             }
         }
 
-        // ±âµÕ »ı¼º
+        // ê¸°ë‘¥ ìƒì„±
         void SpawnPipe()
         {
             float spawnY = this.transform.position.y + Random.Range(minSpawnY, maxSpawnY);
